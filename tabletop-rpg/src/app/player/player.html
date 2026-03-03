@@ -1,0 +1,19 @@
+<div 
+    class="text-align-center cursor-move position-absolute initial-placement"
+    #topLevelDiv
+    (mousedown)="startDrag($event, topLevelDiv, input)"
+    (mouseup)="endDrag($event, topLevelDiv)"
+    (mouseleave)="endDrag($event, topLevelDiv)"
+    (dblclick)="toggleColorSelect()"
+    [style]="style()">
+    <input #input [(value)]="name">
+    <div class="outline sizing" [ngClass]="color()"></div>
+    @if(showColorDropdown()) {
+        <select [class]="color()" (change)="updateColor($event)" name="color">
+            @for (option of colorDropdownOptions; track $index) {
+                <option [value]="option" [class]="`outline ${option}`" [selected]="color() === option">{{ option | titlecase }}</option>
+            }
+        </select>
+    }
+</div>
+

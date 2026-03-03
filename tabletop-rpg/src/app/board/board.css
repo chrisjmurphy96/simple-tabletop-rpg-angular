@@ -1,0 +1,27 @@
+/* .grid {
+    display: grid;
+    grid-template-columns: repeat(10, 5em);
+}
+
+.cell {
+    border-style: solid;
+    border-width: 0.1em;
+    width: 5em;
+    height: 5em;
+} */
+
+canvas {
+    width: 100vw;
+    height: 100vh;
+    background-size: 5em 5em;
+    /* padding: .5em; */
+    background-image:
+        linear-gradient(to right, grey .1em, transparent .1em),
+        linear-gradient(to bottom, grey .1em, transparent .1em);
+    border-bottom-width: .15em;
+    border-bottom-color: grey;
+    border-bottom-style: solid;
+    border-right-width: .15em;
+    border-right-color: grey;
+    border-right-style: solid;
+}
