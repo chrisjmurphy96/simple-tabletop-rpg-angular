@@ -1,5 +1,16 @@
 import { PlayerColor } from "./playerColor";
 
-export class PlayerState {
-    constructor(public id: string | null = null, public style_left = '', public style_top = '', public color: PlayerColor = 'blue', public name = 'Name here') { }
+export interface PlayerState {
+    id: string | null;
+    style_left: string;
+    style_top: string;
+    color: PlayerColor;
+    name: string;
+}
+
+export function stateHasChanged(lastState: PlayerState, currentState: PlayerState): boolean {
+    return lastState.style_left !== currentState.style_left ||
+        lastState.style_top !== currentState.style_top ||
+        lastState.color !== currentState.color ||
+        lastState.name !== currentState.name;
 }

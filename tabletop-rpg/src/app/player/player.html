@@ -6,7 +6,7 @@
     (mouseleave)="endDrag($event, topLevelDiv)"
     (dblclick)="toggleColorSelect()"
     [style]="style()">
-    <input #input [(value)]="name">
+    <input #input [(ngModel)]="name">
     <div class="outline sizing" [ngClass]="color()"></div>
     @if(showColorDropdown()) {
         <select [class]="color()" (change)="updateColor($event)" name="color">

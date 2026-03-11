@@ -1,9 +1,10 @@
 import { NgClass, TitleCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, Input, linkedSignal, model, OnInit, Output, output, signal } from '@angular/core';
-import { PlayerColor } from './playerColor';
-import { PlayerState } from './playerState';
 import { HttpClient } from '@angular/common/http';
-import { interval, timer } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, model, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { interval } from 'rxjs';
+import { PlayerColor } from './playerColor';
+import { PlayerState, stateHasChanged } from './playerState';
 
 /**
  * Adapted from https://www.w3schools.com/howto/howto_js_draggable.asp
@@ -26,13 +27,23 @@ import { interval, timer } from 'rxjs';
  */
 @Component({
   selector: 'app-player',
-  imports: [NgClass, TitleCasePipe],
+  imports: [NgClass, FormsModule, TitleCasePipe],
   templateUrl: './player.html',
   styleUrl: './player.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Player implements OnInit {
-  public readonly initialState = input(new PlayerState());
+  public static get initialStateBinding() {
+    return 'initialState';
+  };
+
+  public readonly initialState = input<PlayerState>({
+    id: null,
+    style_left: '',
+    style_top: '',
+    color: 'blue',
+    name: 'Name here'
+  });
 
   // it's possible I've overcomplicated the output logic,
   // however I am not familiar enough with the new Signal logic to tell for sure.
@@ -41,7 +52,19 @@ export class Player implements OnInit {
   // maybe can use model()? Would need to rewrite an awful lot. 
   // Not sure I'd like the new implementation either.
   // public stateUpdate = output<PlayerState>();
-  private readonly _currentState = linkedSignal(() => new PlayerState(this._id(), this._styleLeft(), this._styleTop(), this.color(), this.name()));
+  private _lastState?: PlayerState;
+  private readonly _currentState = linkedSignal<PlayerState>(() => {
+    if (this.color() === 'purple'){
+      console.log(this.name());
+    }
+    return {
+      id: this._id(),
+      style_left: this._styleLeft(),
+      style_top: this._styleTop(),
+      color: this.color(),
+      name: this.name()
+    };
+  });
 
   public readonly color = signal<PlayerColor>('blue');
   public colorDropdownOptions: PlayerColor[] = ['red', 'green', 'blue', 'yellow', 'purple', 'orange'];
@@ -67,6 +90,7 @@ export class Player implements OnInit {
    * if nothing has.
    */
   public ngOnInit(): void {
+    this._lastState = this.initialState();
     if (this.initialState().id !== null) {
       this._id.set(this.initialState().id);
       this._styleLeft.set(this.initialState().style_left);
@@ -77,21 +101,29 @@ export class Player implements OnInit {
     // this kind of logic might be prime for moving out to a web worker
     const oneSecondInMilliseconds = 1000;
     interval(oneSecondInMilliseconds)
-      .subscribe(() => this._httpClient
-        .post('/players/update', { player: this._currentState() }, {
-          responseType: 'text'
-        })
-        // TODO: This will trigger updating the id for _currentState, which is great,
-        // but I'd like to avoid triggering a redraw from angular.
-        // Not sure what the current options for this are.
-        .subscribe({
-          next: (id?: string) => {
-            if (id && id !== this._id()) {
-              this._id.set(id);
-            }
+      .subscribe(() => {
+        if (stateHasChanged(this._lastState!, this._currentState())) {
+          this._lastState = this._currentState();
+          this.updatePlayerState();
+        }
+      });
+  }
+
+  private updatePlayerState(): void {
+    this._httpClient
+      .post('/players/update', { player: this._currentState() }, {
+        responseType: 'text'
+      })
+      // TODO: This will trigger updating the id for _currentState, which is great,
+      // but I'd like to avoid triggering a redraw from angular.
+      // Not sure what the current options for this are.
+      .subscribe({
+        next: (id?: string) => {
+          if (id && id !== this._id()) {
+            this._id.set(id);
           }
-        })
-    );
+        }
+      });
   }
 
   public toggleColorSelect(): void {
