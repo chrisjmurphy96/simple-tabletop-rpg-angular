@@ -45,6 +45,7 @@
               "outputHashing": "all"
             },
             "development": {
+              "baseHref": "http://localhost:4200",
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true

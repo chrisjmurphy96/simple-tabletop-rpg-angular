@@ -4,4 +4,7 @@ import { Board } from './board/board';
 export const routes: Routes = [{
     path: '',
     component: Board
+}, {
+    path: '**',
+    component: Board,
 }];
