@@ -1,0 +1,8 @@
+<form (submit)="onSubmit($event)">
+    <input type="email" autofocus autocomplete="username" placeholder="Enter your email address" [formField]="newUserForm.email">
+    <input type="password" autocomplete="current-password" placeholder="Enter your password" [formField]="newUserForm.password">
+    <button type="submit">Create account</button>
+    @if (showErrorCreatingUser()) {
+        <span err>Failed to create user!</span>
+    }
+</form>

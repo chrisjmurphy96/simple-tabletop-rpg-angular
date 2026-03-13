@@ -1,0 +1,6 @@
+<form (submit)="onSubmit($event)">
+    <input type="email" autofocus autocomplete="username" placeholder="Enter your email address" [formField]="loginForm.email">
+    <input type="password" autocomplete="current-password" placeholder="Enter your password" [formField]="loginForm.password">
+    <button type="submit">Sign in</button>
+</form>
+<button (click)="routeToNewAccount()">Make a new account</button>
