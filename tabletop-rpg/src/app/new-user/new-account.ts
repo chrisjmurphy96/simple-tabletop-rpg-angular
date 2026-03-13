@@ -1,15 +1,20 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { email, form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { LoginData } from '../login/login-data';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { RpgRoutes } from '../rpg-routes';
 
+/**
+ * Both this and login are borrowing pretty heavily from https://angular.dev/essentials/signal-forms#validation-and-state.
+ * There's only so many ways to write a login, if I come up with a more friendly design I can revist.
+ */
 @Component({
   selector: 'app-new-account',
   imports: [FormField],
   templateUrl: './new-account.html',
   styleUrl: './new-account.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NewAccount {
   private readonly _newUserData = signal<LoginData>({
@@ -22,6 +27,8 @@ export class NewAccount {
     email(schemaPath.email, { message: 'Enter a valid email address' });
     required(schemaPath.password, { message: 'Password is required' });
     const passwordLength = 'Password must be between 8 and 72 characters';
+    // TODO: length validators seem broken. I cannot for the life of me
+    // figure out why. All the tutorials seem to do things the exact same way.
     maxLength(schemaPath.password, 72, { message: passwordLength });
     minLength(schemaPath.password, 8, { message: passwordLength });
     // TODO: if I ever want to use this for real, need stronger password requirements.

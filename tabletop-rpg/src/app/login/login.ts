@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { LoginData } from './login-data';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ import { RpgRoutes } from '../rpg-routes';
   imports: [FormField],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Login {
   private readonly _loginModel = signal<LoginData>({

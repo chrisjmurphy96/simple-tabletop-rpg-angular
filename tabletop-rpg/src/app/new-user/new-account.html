@@ -1,6 +1,30 @@
 <form (submit)="onSubmit($event)">
-    <input type="email" autofocus autocomplete="username" placeholder="Enter your email address" [formField]="newUserForm.email">
-    <input type="password" autocomplete="current-password" placeholder="Enter your password" [formField]="newUserForm.password">
+    <div>
+        <label>
+            Email:
+            <input type="email" autofocus autocomplete="username" [formField]="newUserForm.email">
+        </label>
+        @if (newUserForm.email().touched() && newUserForm.email().invalid()) {
+            <ul class="error-list">
+                @for (error of newUserForm.email().errors(); track error.message) {
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
+    </div>
+    <div>
+        <label>
+            Password:
+            <input type="password" autocomplete="current-password" [formField]="newUserForm.password">
+        </label>
+        @if (newUserForm.password().touched() && newUserForm.password().invalid()) {
+            <ul class="error-list">
+                @for (error of newUserForm.password().errors(); track error.message) {
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
+    </div>
     <button type="submit">Create account</button>
     @if (showErrorCreatingUser()) {
         <span err>Failed to create user!</span>

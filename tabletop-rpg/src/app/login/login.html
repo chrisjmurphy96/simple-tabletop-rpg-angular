@@ -1,6 +1,26 @@
 <form (submit)="onSubmit($event)">
-    <input type="email" autofocus autocomplete="username" placeholder="Enter your email address" [formField]="loginForm.email">
-    <input type="password" autocomplete="current-password" placeholder="Enter your password" [formField]="loginForm.password">
+    <label>
+        Email:
+        <input type="email" autofocus autocomplete="username" placeholder="Enter your email address" [formField]="loginForm.email">
+        @if (loginForm.email().touched() && loginForm.email().invalid()) {
+            <ul class="error-list">
+                @for (error of loginForm.email().errors(); track error.message) {
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
+    </label>
+    <label>
+        Password:
+        <input type="password" autocomplete="current-password" placeholder="Enter your password" [formField]="loginForm.password">
+        @if (loginForm.password().touched() && loginForm.password().invalid()) {
+            <ul class="error-list">
+                @for (error of loginForm.password().errors(); track error.message) {
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
+    </label>
     <button type="submit">Sign in</button>
 </form>
 <button (click)="routeToNewAccount()">Make a new account</button>
